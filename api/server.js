@@ -1,16 +1,31 @@
 import express from "express";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+import userRoutes from './routes/user.routes.js'
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+
+// Get MongoDB URI from environment variables
+const mongoURI = process.env.MONGODB_URI;
+
+if (!mongoURI) {
+  console.error("MongoDB URI is not set in the environment variables.");
+  process.exit(1);
+}
 
 mongoose
-  .connect(process.eventNames.MANGO)
+  .connect(mongoURI) 
   .then(() => {
-    console.log("mongo server is connected");
+    console.log("MongoDB is connected boss");
   })
-  .catch(() => {
-    console.log("boss there is an error");
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB:", err);
   });
-const app = express();
 
 app.listen(3000, () => {
-  console.log("sir mongodb is running");
+  console.log("Server is running on port 3000");
 });
+app.use("/api/user",userRoutes)
